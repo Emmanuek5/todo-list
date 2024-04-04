@@ -10,13 +10,13 @@ export default function TaskContainer() {
   const [tasks, setTasks] = useState<Task[] | null>(null);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    const fetchTasks = async () => {
+      const fetchedTasks = await getTasks();
+      setTasks(fetchedTasks);
+    };
 
-  const fetchTasks = async () => {
-    const fetchedTasks = await getTasks();
-    setTasks(fetchedTasks);
-  };
+    fetchTasks(); // Fetch tasks only once when the component mounts
+  }, []); // Empty dependency array ensures it runs only once
 
   const handleDeleteTask = async (taskId: string | undefined | null) => {
     // Filter out the deleted task from the tasks array
@@ -26,8 +26,9 @@ export default function TaskContainer() {
     // Perform deletion action using API or other means
   };
 
-  const handleTaskAdded = () => {
-    fetchTasks(); // Call fetchTasks to refresh the task list after a new task is added
+  const handleTaskAdded = async () => {
+    const fetchedTasks = await getTasks(); // Fetch updated tasks after a new task is added
+    setTasks(fetchedTasks);
   };
 
   if (tasks === null) {
